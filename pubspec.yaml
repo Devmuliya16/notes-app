@@ -1,0 +1,41 @@
+name: notes_maker
+description: A new Flutter project.
+publish_to: 'none'
+version: 0.1.0
+
+environment:
+  sdk: '>=2.19.2 <3.0.0'
+
+dependencies:
+  drift: ^2.8.0
+  flutter:
+    sdk: flutter
+  flutter_staggered_grid_view: ^0.6.2
+  intl: ^0.18.1
+  provider: ^6.0.5
+  sqlite3_flutter_libs: ^0.5.0
+  path_provider: ^2.0.0
+  path: ^1.8.2
+
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^2.0.0
+  drift_dev: ^2.8.2
+  build_runner: ^2.3.3
+  
+flutter:
+  uses-material-design: true
+ 
+  fonts:
+    - family: Carlito
+      fonts:
+        - asset: Assets/fonts/Carlito-Regular.ttf
+        - asset: Assets/fonts/Carlito-Italic.ttf
+          style: italic
+        - asset: Assets/fonts/Carlito-BoldItalic.ttf
+          style: italic
+          weight: 700
+        - asset: Assets/fonts/Carlito-Bold.ttf
+          weight: 700
