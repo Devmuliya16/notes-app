@@ -20,14 +20,12 @@ class MainApp extends StatelessWidget {
         debugShowCheckedModeBanner: false,
         theme: ThemeData(
             textTheme: TextTheme(
-                bodyLarge: TextStyle(
-                    fontFamily: 'Carlito',
-                    fontWeight: FontWeight.bold,
-                    fontSize: 24),
-                bodyMedium: TextStyle(
+                titleLarge: TextStyle(
                     fontFamily: 'Carlito',
                     fontWeight: FontWeight.bold,
                     fontSize: 20),
+                bodyLarge: TextStyle(fontFamily: 'Carlito', fontSize: 20),
+                bodyMedium: TextStyle(fontFamily: 'Carlito', fontSize: 15),
                 labelMedium: TextStyle(
                     fontFamily: 'Carlito',
                     fontWeight: FontWeight.normal,

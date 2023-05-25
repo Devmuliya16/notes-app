@@ -1,8 +1,13 @@
-import 'package:drift/drift.dart';
+import 'package:drift/drift.dart' as df;
 import 'package:flutter/material.dart';
-import 'package:notes_maker/screen/notes_detail.dart';
 import 'package:provider/provider.dart';
 import 'package:notes_maker/database/DataBase.dart';
+
+//pages
+import 'package:notes_maker/screen/notes_detail.dart';
+
+//components
+import 'package:notes_maker/components/gridview.dart';
 
 class NotesPage extends StatefulWidget {
   const NotesPage({super.key});
@@ -17,9 +22,16 @@ class _NotesPageState extends State<NotesPage> {
   Widget build(BuildContext context) {
     //access the instance of the database using provider in current context
     database = Provider.of<AppDatabase>(context);
+
+    //update parent widget from child
+    updatePage() {
+      setState(() {});
+    }
+
     return Scaffold(
       appBar: AppBar(
         title: Text('Notes', style: Theme.of(context).textTheme.titleLarge),
+        backgroundColor: Colors.white,
       ),
       body: FutureBuilder<List<NoteData>>(
         future: _getNotesFromDatabase(),
@@ -31,11 +43,11 @@ class _NotesPageState extends State<NotesPage> {
                 child: Text(
                   'No notes found click on add button and create notes',
                   textAlign: TextAlign.center,
-                  style: Theme.of(context).textTheme.bodyMedium,
+                  style: Theme.of(context).textTheme.titleLarge,
                 ),
               );
             } else {
-              return noteListUi(notelist);
+              return noteListUi(notelist: notelist, updatepage: updatePage);
             }
           } else if (snapshot.hasError) {
             return Center(
@@ -46,17 +58,11 @@ class _NotesPageState extends State<NotesPage> {
         },
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () => _navigateToDetail(
-            title: "note title",
-            noteCompanion: const NoteCompanion(
-                id: Value(1),
-                title: Value(''),
-                content: Value(''),
-                color: Value(1),
-                priority: Value(1))),
+        onPressed: () => _navigateToDetail(title: "New note"),
         shape: CircleBorder(
           side: BorderSide(color: Colors.black, width: 2),
         ),
+        backgroundColor: Colors.white,
         child: Icon(Icons.add, color: Colors.black),
       ),
     );
@@ -66,18 +72,22 @@ class _NotesPageState extends State<NotesPage> {
     return await database.getAllNotes();
   }
 
-  Widget noteListUi(List<NoteData> notes) {
-    return Center();
-  }
-
-  void _navigateToDetail(
-      {required String title, required NoteCompanion noteCompanion}) {
-    Navigator.push(
+  void _navigateToDetail({required String title}) async {
+    var res = await Navigator.push(
         context,
         MaterialPageRoute(
             builder: (context) => NotesDetail(
                   title: title,
-                  noteCompanion: noteCompanion,
+                  note: NoteCompanion(
+                    title: df.Value(''),
+                    content: df.Value(''),
+                    color: df.Value(null),
+                    priority: df.Value(null),
+                    category: df.Value(null),
+                  ),
                 )));
+    if (res == true) {
+      setState(() {});
+    }
   }
 }

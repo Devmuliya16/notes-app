@@ -35,6 +35,18 @@ class AppDatabase extends _$AppDatabase {
   }
 
   Future<int> insertNote(NoteCompanion noteCompanion) async {
-    return await into(note).insert(noteCompanion);
+    var result = await into(note).insert(noteCompanion);
+    print(result);
+    return result;
+  }
+
+  Future<int> deleteNote(NoteData noteData) async {
+    var result = await delete(note).delete(noteData);
+    print(result);
+    return result;
+  }
+
+  Future<bool> updateNote(NoteData noteData) async {
+    return await update(note).replace(noteData);
   }
 }

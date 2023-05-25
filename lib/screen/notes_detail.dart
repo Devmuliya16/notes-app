@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:notes_maker/database/DataBase.dart';
+import 'package:drift/drift.dart' as db;
+import 'package:provider/provider.dart';
+
+import '../components/Inputs.dart';
 
 class NotesDetail extends StatefulWidget {
   final String title;
-  final NoteCompanion noteCompanion;
-  const NotesDetail(
-      {Key? key, required this.title, required this.noteCompanion})
+  final NoteCompanion note;
+  const NotesDetail({Key? key, required this.title, required this.note})
       : super(key: key);
 
   @override
@@ -21,11 +24,14 @@ class _NotesDetailState extends State<NotesDetail> {
   void initState() {
     titleinputController = TextEditingController();
     descriptionController = TextEditingController();
+    titleinputController.text = widget.note.title.value;
+    descriptionController.text = widget.note.content.value;
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
+    database = Provider.of<AppDatabase>(context);
     return Scaffold(
       appBar: _getDetailAppbar(),
       body: Center(
@@ -33,25 +39,17 @@ class _NotesDetailState extends State<NotesDetail> {
           padding: const EdgeInsets.all(8.0),
           child: Column(
             children: [
-              TextField(
-                controller: titleinputController,
-                decoration: InputDecoration(
-                    border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(5.0)),
-                    labelText: 'Title'),
-              ),
+              getInputOutlined(
+                  controller: titleinputController, labeltext: "title"),
               SizedBox(
                 height: 20.0,
               ),
-              TextField(
+              getInputOutlined(
                 controller: descriptionController,
-                maxLength: 225,
-                minLines: 7,
-                maxLines: 8,
-                decoration: InputDecoration(
-                    border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(5.0)),
-                    labelText: 'Description'),
+                labeltext: "description",
+                maxLen: 255,
+                maxL: 10,
+                minL: 8,
               ),
               SizedBox(
                 height: 20.0,
@@ -70,19 +68,83 @@ class _NotesDetailState extends State<NotesDetail> {
           icon: Icon(Icons.chevron_left, color: Colors.black)),
       title: Text(
         widget.title,
-        style: Theme.of(context).textTheme.bodyMedium,
+        style: Theme.of(context).textTheme.bodyLarge,
       ),
       backgroundColor: Colors.white,
       actions: [
         IconButton(
-            onPressed: () {},
+            onPressed: () {
+              _saveNote();
+            },
             icon: Icon(
               Icons.save,
               color: Colors.black,
             )),
         IconButton(
-            onPressed: () {}, icon: Icon(Icons.delete, color: Colors.black))
+            onPressed: () => _deleteNote(),
+            icon: Icon(Icons.delete, color: Colors.black))
       ],
     );
+  }
+
+  // save new note
+  void _saveNote() {
+    if (widget.note.id.present) {
+      database
+          .updateNote(NoteData(
+              id: widget.note.id.value,
+              title: titleinputController.text,
+              content: descriptionController.text,
+              color: 1,
+              category: 1,
+              priority: 1))
+          .then((value) {
+        print(value);
+        Navigator.pop(context, true);
+        print("updated");
+      }).catchError((error) => print(error.toString()));
+    } else {
+      database
+          .insertNote(NoteCompanion(
+              title: db.Value(titleinputController.text),
+              content: db.Value(descriptionController.text),
+              category: db.Value(1),
+              color: db.Value(1)))
+          .then((value) => Navigator.pop(context, true))
+          .catchError((error) => print(error.toString()));
+    }
+  }
+
+  // delete note
+  void _deleteNote() {
+    //set alert
+    showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            title: Text('Delete Note'),
+            content: Text('do you want to delete ${widget.note.title.value} ?'),
+            actions: [
+              TextButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  child: Text('Cancel')),
+              TextButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                    database
+                        .deleteNote(NoteData(
+                          id: widget.note.id.value,
+                          title: widget.note.title.value,
+                          content: widget.note.content.value,
+                        ))
+                        .then((value) => Navigator.pop(context, true))
+                        .catchError((error) => print(error.toString()));
+                  },
+                  child: Text('Delete'))
+            ],
+          );
+        });
   }
 }
