@@ -18,6 +18,7 @@ class NotesPage extends StatefulWidget {
 
 class _NotesPageState extends State<NotesPage> {
   late AppDatabase database;
+  var crossAxitcnt = 2;
   @override
   Widget build(BuildContext context) {
     //access the instance of the database using provider in current context
@@ -32,6 +33,17 @@ class _NotesPageState extends State<NotesPage> {
       appBar: AppBar(
         title: Text('Notes', style: Theme.of(context).textTheme.titleLarge),
         backgroundColor: Colors.white,
+        actions: [
+          IconButton(
+            onPressed: () => _setGrid(),
+            icon: Icon(crossAxitcnt == 2
+                ? Icons.grid_4x4
+                : (crossAxitcnt == 3)
+                    ? Icons.list
+                    : Icons.grid_3x3),
+            color: Colors.black,
+          )
+        ],
       ),
       body: FutureBuilder<List<NoteData>>(
         future: _getNotesFromDatabase(),
@@ -47,7 +59,10 @@ class _NotesPageState extends State<NotesPage> {
                 ),
               );
             } else {
-              return noteListUi(notelist: notelist, updatepage: updatePage);
+              return noteListUi(
+                  notelist: notelist,
+                  updatepage: updatePage,
+                  crossAxiscnt: crossAxitcnt);
             }
           } else if (snapshot.hasError) {
             return Center(
@@ -89,5 +104,14 @@ class _NotesPageState extends State<NotesPage> {
     if (res == true) {
       setState(() {});
     }
+  }
+
+  _setGrid() {
+    crossAxitcnt = (crossAxitcnt == 1)
+        ? 2
+        : (crossAxitcnt == 2)
+            ? 3
+            : 1;
+    setState(() {});
   }
 }

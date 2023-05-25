@@ -6,12 +6,19 @@ import 'package:drift/drift.dart' as df;
 //database
 import '../database/DataBase.dart';
 
+//components
+import '../components/elements.dart';
+
 class noteListUi extends StatefulWidget {
-  const noteListUi(
-      {super.key, required this.notelist, required this.updatepage});
+  noteListUi(
+      {super.key,
+      required this.notelist,
+      required this.updatepage,
+      required this.crossAxiscnt});
 
   final List<NoteData> notelist;
   final Function updatepage;
+  var crossAxiscnt = 2;
 
   @override
   State<noteListUi> createState() => _noteListUiState();
@@ -21,7 +28,7 @@ class _noteListUiState extends State<noteListUi> {
   @override
   Widget build(BuildContext context) {
     return MasonryGridView.count(
-        crossAxisCount: 2,
+        crossAxisCount: widget.crossAxiscnt,
         itemBuilder: (context, index) {
           NoteData note = widget.notelist[index];
           return InkWell(
@@ -42,10 +49,7 @@ class _noteListUiState extends State<noteListUi> {
                           child: Text(note.title,
                               style: Theme.of(context).textTheme.titleLarge),
                         ),
-                        Text(
-                          '1',
-                          style: Theme.of(context).textTheme.bodyMedium,
-                        )
+                        getBadge(priority: note.priority ?? 0)
                       ],
                     ),
                     Text(note.content),
@@ -80,7 +84,6 @@ class _noteListUiState extends State<noteListUi> {
                     priority: df.Value(note.priority)))));
     if (res == true) {
       widget.updatepage();
-      setState(() {});
     }
   }
 }
