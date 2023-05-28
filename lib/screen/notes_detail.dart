@@ -2,8 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:notes_maker/database/DataBase.dart';
 import 'package:drift/drift.dart' as db;
 import 'package:provider/provider.dart';
+import 'package:intl/intl.dart';
 
+//components
 import '../components/Inputs.dart';
+import '../components/prioritylist.dart';
+import '../components/colorlist.dart';
 
 class NotesDetail extends StatefulWidget {
   final String title;
@@ -19,13 +23,16 @@ class _NotesDetailState extends State<NotesDetail> {
   late AppDatabase database;
   late TextEditingController titleinputController;
   late TextEditingController descriptionController;
-
+  late int priority;
+  late int color;
   @override
   void initState() {
     titleinputController = TextEditingController();
     descriptionController = TextEditingController();
     titleinputController.text = widget.note.title.value;
     descriptionController.text = widget.note.content.value;
+    priority = widget.note.priority.value!;
+    color = widget.note.color.value!;
     super.initState();
   }
 
@@ -39,6 +46,24 @@ class _NotesDetailState extends State<NotesDetail> {
           padding: const EdgeInsets.all(8.0),
           child: Column(
             children: [
+              PriorityList(
+                  index: widget.note.priority.value!,
+                  setPriority: (index) {
+                    print(index);
+                    priority = index;
+                  }),
+              SizedBox(
+                height: 10.0,
+              ),
+              ColorList(
+                  index: color,
+                  setColor: (index) {
+                    print(index);
+                    color = index;
+                  }),
+              SizedBox(
+                height: 10.0,
+              ),
               getInputOutlined(
                   controller: titleinputController, labeltext: "title"),
               SizedBox(
@@ -61,6 +86,7 @@ class _NotesDetailState extends State<NotesDetail> {
     );
   }
 
+  //appbar
   _getDetailAppbar() {
     return AppBar(
       leading: IconButton(
@@ -95,9 +121,10 @@ class _NotesDetailState extends State<NotesDetail> {
               id: widget.note.id.value,
               title: titleinputController.text,
               content: descriptionController.text,
-              color: 1,
+              color: this.color,
               category: 1,
-              priority: 1))
+              priority: this.priority,
+              date: DateFormat.yMMMd().format(DateTime.now())))
           .then((value) {
         print(value);
         Navigator.pop(context, true);
@@ -109,7 +136,9 @@ class _NotesDetailState extends State<NotesDetail> {
               title: db.Value(titleinputController.text),
               content: db.Value(descriptionController.text),
               category: db.Value(1),
-              color: db.Value(1)))
+              color: db.Value(this.color),
+              priority: db.Value(this.priority),
+              date: db.Value(DateFormat.yMMMd().format(DateTime.now()))))
           .then((value) => Navigator.pop(context, true))
           .catchError((error) => print(error.toString()));
     }
@@ -135,10 +164,10 @@ class _NotesDetailState extends State<NotesDetail> {
                     Navigator.pop(context);
                     database
                         .deleteNote(NoteData(
-                          id: widget.note.id.value,
-                          title: widget.note.title.value,
-                          content: widget.note.content.value,
-                        ))
+                            id: widget.note.id.value,
+                            title: widget.note.title.value,
+                            content: widget.note.content.value,
+                            date: DateFormat.yMMMd().format(DateTime.now())))
                         .then((value) => Navigator.pop(context, true))
                         .catchError((error) => print(error.toString()));
                   },

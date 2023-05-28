@@ -8,6 +8,7 @@ import '../database/DataBase.dart';
 
 //components
 import '../components/elements.dart';
+import '../components/colorlist.dart';
 
 class noteListUi extends StatefulWidget {
   noteListUi(
@@ -38,7 +39,8 @@ class _noteListUiState extends State<noteListUi> {
               padding: EdgeInsets.all(10),
               decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(5.0),
-                  border: Border.all(color: Colors.black)),
+                  border: Border.all(color: Colors.black),
+                  color: colors[note.color ?? 0]),
               child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -57,7 +59,7 @@ class _noteListUiState extends State<noteListUi> {
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: [
                         Text(
-                          '25/5/2023',
+                          note.date,
                           style: Theme.of(context).textTheme.labelSmall,
                         )
                       ],

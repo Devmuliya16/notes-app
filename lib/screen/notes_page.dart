@@ -96,8 +96,8 @@ class _NotesPageState extends State<NotesPage> {
                   note: NoteCompanion(
                     title: df.Value(''),
                     content: df.Value(''),
-                    color: df.Value(null),
-                    priority: df.Value(null),
+                    color: df.Value(0),
+                    priority: df.Value(0),
                     category: df.Value(null),
                   ),
                 )));
